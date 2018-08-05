@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const pkg = require('../package.json')
+
+program
+    .version(pkg.version)
+    .command('init', 'init egg db')
+    .command('add <path...>', 'add file to cache')
+    .command('commit -m <message>', 'commit cache to db')
+    .command('push url', 'push db to remote repo')
+    .command('pull url', 'pull db from remote repo')
+    .command('branch', 'create branch')
+    .command('checkout', 'checkout branch')
+    .command('merge', 'merge head')
+    .command('rebase', 'rebase head')
+    .command('reset', 'reset head')
+    .parse(process.argv)

@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+const fs = require('fs-extra')
+const cp = require('child_process')
+const writeTree = require('../lib/write-tree').default
+const commitTree = require('../lib/commit-tree').default
+const refreshCache = require('../lib/refresh-cache').default
+const { EGG_DIR } = require('../lib/config')
+
+async function edit(file) {
+    return new Promise((resolve, reject) => {
+        const editor = cp.spawn(process.env.EDITOR || 'vi', [ file ], {
+            stdio: 'inherit'
+        })
+
+        editor.once('exit', error => {
+            if (error)
+                reject(error)
+            else
+                resolve()
+        })
+    })
+}
+
+async function read(file) {
+    try {
+        await edit(file)
+        return await fs.readFile(file)
+    } catch (error) {
+        console.log(error)
+        process.exit(1)
+    }
+}
+
+async function main() {
+    await refreshCache()
+
+    let message
+
+    if (process.argv[2] === '-m') {
+        if (!process.argv[3]) {
+            console.log('egg commit -m <message>')
+            process.exit(1)
+        }
+
+        message = process.argv[3]
+    } else {
+        message = await read('.editmsg')
+    }
+
+    const parent = await fs.readFile(`${EGG_DIR}/HEAD`)
+
+    const tree = await writeTree()
+    const commit = await commitTree(tree, [parent], message)
+
+    await fs.writeFile(`${EGG_DIR}/HEAD`, commit)
+    await fs.unlink('.editmsg')
+}
+
+main()

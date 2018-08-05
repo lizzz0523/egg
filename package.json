@@ -1,0 +1,21 @@
+{
+  "name": "egg",
+  "version": "1.0.0",
+  "description": "a funny mini project that mock git(v0.99) using nodejs",
+  "main": "egg",
+  "scripts": {
+    "test": "mocha",
+    "build": "tsc --watch"
+  },
+  "keywords": [
+    "git",
+    "version-control"
+  ],
+  "author": "lizmlzhou",
+  "license": "MIT",
+  "dependencies": {
+    "@types/fs-extra": "^5.0.4",
+    "commander": "^2.16.0",
+    "fs-extra": "^7.0.0"
+  }
+}
